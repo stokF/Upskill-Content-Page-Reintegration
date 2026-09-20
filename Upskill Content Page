@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>PDE Upskilling Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --card: #121215;
+    --tile: #15140f;
+    --border: #1d1d22;
+    --border-strong: #30363d;
+    --heading: #ffffff;
+    --body: #e7e9ea;
+    --muted: #938e85;
+    --accent: #f59e0b;
+    --accent-fg: #101418;
+    --track: #26262c;
+    --shadow: 0 1px 2px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #ffffff; --card: #f8fafc; --tile: #fdf3f4;
+      --border: #e2e8f0; --border-strong: #cbd5e1;
+      --heading: #1c3b5e; --body: #1f2937; --muted: #64748b;
+      --accent: #e5384b; --accent-fg: #ffffff; --track: #e2e8f0;
+      --shadow: 0 1px 2px rgba(28,59,94,.08);
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #ffffff; --card: #f8fafc; --tile: #fdf3f4;
+    --border: #e2e8f0; --border-strong: #cbd5e1;
+    --heading: #1c3b5e; --body: #1f2937; --muted: #64748b;
+    --accent: #e5384b; --accent-fg: #ffffff; --track: #e2e8f0;
+    --shadow: 0 1px 2px rgba(28,59,94,.08);
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--body);
+    font-family: Inter, "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 3vw, 28px);
+    padding-block: 40px 64px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  h1, h2, h3, h4 {
+    font-family: "Bricolage Grotesque", Inter, sans-serif;
+    color: var(--heading); margin: 0; text-wrap: balance;
+  }
+  .phase__label, .card__meta, .grouplabel, .item__meta, .item__sub, .sub,
+  .meter__top span, .meter__foot, .tier__stat, .tier__meter b, footer {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .dot { opacity: .6; padding: 0 3px; }
+
+  .top { display: grid; grid-template-columns: 1.05fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 800px) { .top { grid-template-columns: 1fr; } }
+  .crumb {
+    display: inline-block; border: 1px solid var(--border-strong);
+    border-radius: 7px; padding: 5px 12px; font-size: 12px;
+    color: var(--muted); font-weight: 500;
+  }
+  .crumb:hover { color: var(--heading); text-decoration: none; background: var(--card); }
+  h1 { font-size: clamp(30px, 5vw, 38px); font-weight: 800; letter-spacing: -.02em; margin-top: 18px; }
+  .sub { color: var(--muted); font-size: 12.5px; margin: 6px 0 0; }
+  .lede { color: var(--muted); font-size: 14.5px; max-width: 46ch; margin: 14px 0 0; }
+
+  .notes {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px 18px;
+  }
+  .notes h2 {
+    font-size: 10.5px; letter-spacing: .15em; color: var(--accent); font-weight: 700;
+    font-family: "IBM Plex Mono", monospace; text-transform: uppercase;
+  }
+  .notes ul { list-style: none; margin: 11px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .notes li { position: relative; padding-left: 16px; color: var(--muted); font-size: 13px; }
+  .notes li::before {
+    content: ""; position: absolute; left: 0; top: 7px; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--accent);
+  }
+
+  .timer {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px 18px; margin-top: 22px; box-shadow: var(--shadow);
+  }
+  .timer__row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 16px 24px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .timer__days {
+    margin: 0; font-family: "Bricolage Grotesque", Inter, sans-serif;
+    font-size: 22px; font-weight: 800; color: var(--accent); white-space: nowrap;
+  }
+  .timer__days.is-overdue { color: var(--muted); }
+  .timer__mark {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 12px; font-size: 12.5px; color: var(--muted);
+  }
+  .timer__marklabel {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  }
+  .markpill {
+    display: inline-flex; border-radius: 999px; overflow: hidden;
+    border: 1px solid var(--border-strong); background: var(--tile);
+  }
+  .markpill__btn {
+    appearance: none; -webkit-appearance: none; border: 0; background: transparent;
+    cursor: pointer; padding: 6px 15px; font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .04em; color: var(--muted);
+    border-right: 1px solid var(--border-strong); transition: background .15s ease, color .15s ease;
+  }
+  .markpill__btn:last-child { border-right: 0; }
+  .markpill__btn:hover { color: var(--heading); }
+  .markpill__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .markpill__btn.is-active { background: var(--accent); color: var(--accent-fg); }
+  .timer__note { font-size: 12px; color: var(--accent); }
+
+  .split:has(.split__cell--opt[hidden]) { grid-template-columns: 1fr; }
+
+  .split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px;
+  }
+  @media (max-width: 660px) { .split { grid-template-columns: 1fr; } }
+  .split__cell {
+    position: relative; overflow: hidden; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--card);
+    padding: 16px 20px 18px; box-shadow: var(--shadow);
+  }
+  .split__cell::before {
+    content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent);
+  }
+  .split__cell--opt { background: transparent; border-style: dashed; box-shadow: none; }
+  .split__cell--opt::before { background: var(--border-strong); }
+  .split__kind {
+    margin: 0; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--accent);
+  }
+  .split__cell--opt .split__kind { color: var(--muted); }
+  .split__big {
+    margin: 6px 0 0; font-family: "Bricolage Grotesque", Inter, sans-serif;
+    font-size: 27px; font-weight: 800; color: var(--heading); letter-spacing: -.02em;
+  }
+  .split__big span[data-split-hours] { font-size: 14px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+  .split__note { margin: 3px 0 12px; font-size: 12.5px; color: var(--muted); }
+
+  .bar { height: 7px; border-radius: 99px; background: var(--track); overflow: hidden; }
+  .bar > i { display: block; height: 100%; border-radius: 99px; background: var(--accent); transition: width .35s ease; }
+  .bar--sm { height: 5px; width: 110px; }
+  .meter__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 7px; }
+  .meter__top b { font-size: 13px; font-weight: 600; color: var(--heading); font-family: "IBM Plex Mono", monospace; }
+  .meter__top span { font-size: 15px; font-weight: 700; color: var(--accent); }
+  .meter__foot { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--muted); margin-top: 7px; }
+
+  .phase { margin-top: 40px; }
+  .phase__head {
+    display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: end;
+    justify-content: space-between;
+    padding: 0 0 14px; border-bottom: 2px solid var(--accent);
+  }
+  .phase--opt .phase__head { border-bottom-color: var(--border-strong); }
+  .phase__label {
+    margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .24em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .phase--opt .phase__label { color: var(--muted); }
+  .phase__head h2 { font-size: clamp(22px, 3.2vw, 27px); font-weight: 800; letter-spacing: -.02em; }
+  .phase__blurb { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+  .phase__meter { flex: 0 1 260px; min-width: 200px; }
+  .phase--opt .meter__top span { color: var(--muted); }
+
+  .tier { margin-top: 26px; }
+  .tier__head {
+    display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center;
+    justify-content: space-between; padding-left: 13px;
+    border-left: 3px solid var(--accent);
+  }
+  .phase--opt .tier__head { border-left-color: var(--border-strong); }
+  .tier__head h3 { font-size: 16.5px; font-weight: 700; }
+  .section__n {
+    display: inline-block; margin-right: 9px; padding: 2px 8px; border-radius: 5px;
+    background: var(--tile); border: 1px solid var(--border-strong);
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    vertical-align: 2px;
+  }
+  .tier__blurb { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+  .tier__meter { display: flex; align-items: center; gap: 12px; }
+  .tier__stat { font-size: 12px; color: var(--muted); }
+  .tier__meter b { font-size: 13px; font-weight: 700; color: var(--accent); min-width: 42px; text-align: right; }
+  .phase--opt .tier__meter b { color: var(--muted); }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 20px 16px; margin-top: 14px; box-shadow: var(--shadow);
+  }
+  .phase--opt .card { border-style: dashed; box-shadow: none; }
+  .card__head {
+    display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline;
+    justify-content: space-between; padding-bottom: 11px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card h4 { font-size: 15.5px; font-weight: 700; }
+  .card__note { margin: 3px 0 0; font-size: 11.5px; color: var(--muted); }
+  .card__meta { margin: 0; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .card__meta .dur { margin-right: 13px; }
+  .frac { font-weight: 600; }
+  .frac.is-complete { color: var(--accent); }
+  .grouplabel {
+    margin: 14px 0 0; font-size: 10px; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .items { list-style: none; margin: 0; padding: 0; }
+  .item {
+    display: grid; grid-template-columns: 17px 1fr auto;
+    align-items: start; column-gap: 10px; padding: 8px 0;
+  }
+  .item + .item { border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent); }
+  .box {
+    appearance: none; -webkit-appearance: none; margin: 2px 0 0;
+    width: 17px; height: 17px; border-radius: 5px; cursor: pointer;
+    border: 1.5px solid var(--border-strong); background: var(--bg);
+    display: grid; place-content: center;
+  }
+  .box:checked { background: var(--accent); border-color: var(--accent); }
+  .box:checked::after {
+    content: ""; width: 4.5px; height: 8.5px; margin-top: -2px;
+    border: solid var(--accent-fg); border-width: 0 2px 2px 0; transform: rotate(42deg);
+  }
+  .item__label { font-size: 14.5px; line-height: 1.4; }
+  .item__label a { color: var(--body); font-weight: 500; }
+  .item__label a:hover { color: var(--accent); }
+  .box:checked ~ .item__label a { color: var(--muted); }
+  .item__sub { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .item__meta { font-size: 11.5px; color: var(--muted); text-align: right; padding-top: 3px; white-space: nowrap; }
+  @media (max-width: 520px) {
+    .item { grid-template-columns: 17px 1fr; }
+    .item__meta { grid-column: 2; text-align: left; padding-top: 3px; }
+    .tier__head, .phase__head { align-items: start; }
+  }
+
+  footer {
+    margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between;
+    font-size: 11.5px; color: var(--muted);
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <a class="crumb" href="https://learn.ybit.au/dashboard">&#8592;&nbsp; Dashboard</a>
+      <h1>Upskilling Guide</h1>
+      <p class="sub">Policy Deployment Engine team <span class="dot">·</span> <time id="melTime">Melbourne time</time></p>
+      <p class="lede">A structured learning plan for the PDE team, divided into required and optional components for all target marks and roles.</p>
+    </div>
+    <div class="notes">
+      <h2>Before you start</h2>
+      <ul>
+        <li>For courses on <a href="https: linkedin.com/learning" target="_blank" rel="noopener noreferrer">LinkedIn Learning</a>, use your Deakin student email.</li>
+        <li>Every team member completes the required tiers.</li>
+        <li>Completing the training does not contribute to or guarantee any grade.</li>
+        <li>Report broken links or feedback to your Industry Mentor.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="timer">
+    <div class="timer__row">
+      <div>
+        <p class="split__kind">Completion Goal</p>
+        <p class="split__note" id="windowNote" hidden>Recomended completion span: <span id="windowRange"></span></p>
+      </div>
+      <p class="timer__days" id="timerCount">—</p>
+    </div>
+    <div class="timer__mark">
+      <span class="timer__marklabel">Target mark</span>
+      <div class="markpill" role="group" aria-label="Target mark">
+        <button type="button" class="markpill__btn" data-grade="P">P</button>
+        <button type="button" class="markpill__btn" data-grade="C">C</button>
+        <button type="button" class="markpill__btn" data-grade="D">D</button>
+        <button type="button" class="markpill__btn" data-grade="HD">HD</button>
+      </div>
+      <span id="markNote" class="timer__note"></span>
+    </div>
+    <div class="bar"><i id="timerBar" style="width:0%"></i></div>
+    <div class="meter__foot"><span id="timerStatus">Loading&hellip;</span></div>
+  </div>
+
+  <div class="split">
+    <div class="split__cell">
+      <p class="split__kind">Required</p>
+      <p class="split__big"><span id="reqTaskTotal">17</span> Tasks <span data-split-hours="req"> ~28.5 hours</span></p>
+      <p class="split__note"><span id="reqNoteTotal">17</span> compolsory tasks for your target mark. Every team member completes the required tasks.</p>
+      <div class="meter__top"><b>PDE Contributor Progression</b><span id="reqPct">0%</span></div>
+      <div class="bar"><i id="reqBar" style="width:0%"></i></div>
+      <div class="meter__foot"><span id="reqCount">0 of 17 done</span><span id="reqTargetLabel"></span></div>
+    </div>
+    <div class="split__cell split__cell--opt">
+      <p class="split__kind">Optional</p>
+      <p class="split__big">2 Tasks <span data-split-hours="opt"> ~6 hours</span></p>
+      <p class="split__note">2 elective tasks for contributors aiming for a distinction or higher.</p>
+      <div class="meter__top"><b>Further Learning</b><span id="optPct">0%</span></div>
+      <div class="bar"><i id="optBar" style="width:0%"></i></div>
+      <div class="meter__foot"><span id="optCount">0 of 2 done</span><span>Avaliable for students targeting a distinction or higher</span></div>
+    </div>
+  </div>
+
+<section class="phase phase--req" data-phase="req">
+  <header class="phase__head">
+    <div class="phase__text">
+      <p class="phase__label">Compolsory</p>
+      <h2><strong>MANDATORY</strong> upskill content.</strong></h2>
+      <p class="phase__blurb">Required by all team members to become a PDE Contributor.</p>
+    </div>
+    <div class="phase__meter">
+      <div class="meter__top"><b><span data-phase-total>17</span> items</b><span data-phase-pct>0%</span></div>
+      <div class="bar"><i data-phase-bar style="width:0%"></i></div>
+      <div class="meter__foot"><span data-phase-count>0 of 17 done</span><span data-phase-hours> ~28.5 hours</span></div>
+    </div>
+  </header>
+  <div class="tier" data-tier>
+    <div class="tier__head">
+      <div>
+        <h3><span class="section__n">Section 1</span>Core Skills</h3>
+        <p class="tier__blurb">All tabs within Section 1 are mandatory to become a PDE Contributor.</p>
+      </div>
+      <div class="tier__meter">
+        <span class="tier__stat"><span data-tier-total>11</span> items <span class="dot">·</span> <span data-tier-hours>11 h</span></span>
+        <div class="bar bar--sm"><i data-tier-bar style="width:0%"></i></div>
+        <b data-tier-pct>0%</b>
+      </div>
+    </div>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Cloud Introduction</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">2 h</span>
+          <span class="frac" data-sec-count>0/2</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i1" class="box" data-mins="60">
+          <label for="i1" class="item__label"><a href="https://www.linkedin.com/learning/google-cloud-foundations?u=2104084" target="_blank" rel="noopener noreferrer">Google Cloud Foundations</a></label>
+          <span class="item__meta">1 hour</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i2" class="box" data-mins="60">
+          <label for="i2" class="item__label"><a href="https://www.linkedin.com/learning-login/share?account=2104084&amp;forceAccount=false&amp;redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fgoogle-cloud-security-for-beginners-tools-and-services-24377592%3Ftrk%3Dshare_ent_url%26shareId%3DjPxNH6YnSMiRLi7Ozm%252FGtQ%253D%253D" target="_blank" rel="noopener noreferrer">Introduction Google Cloud Security</a></label>
+          <span class="item__meta">1 hour</span>
+        </li>
+      </ul>
+    </article>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Terraform Introduction</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">2 h</span>
+          <span class="frac" data-sec-count>0/1</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i3" class="box" data-mins="120">
+          <label for="i3" class="item__label"><a href="https://www.linkedin.com/learning/learning-terraform-15575129?u=2104084" target="_blank" rel="noopener noreferrer">Learning Terraform</a></label>
+          <span class="item__meta">2 hours</span>
+        </li>
+      </ul>
+    </article>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Open Policy Agent</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">2 h</span>
+          <span class="frac" data-sec-count>0/5</span>
+        </p>
+      </header>
+      <p class="grouplabel">Guided</p>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i4" class="box" data-mins="5">
+          <label for="i4" class="item__label"><a href="https://youtu.be/23cgo7dgjEE?si=RbgY8ocpeuZMFSbN" target="_blank" rel="noopener noreferrer">What is Google Cloud's Organisation Policy Service?</a></label>
+          <span class="item__meta">5 min</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i5" class="box" data-mins="10">
+          <label for="i5" class="item__label"><a href="https://youtu.be/hNgVyq6MARc?si=2fkbLTLBMYPcKDWw" target="_blank" rel="noopener noreferrer">Rego Training Video</a></label>
+          <span class="item__meta">10 min</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i6" class="box" data-mins="5">
+          <label for="i6" class="item__label"><a href="https://youtu.be/M7IwpC9WpIg?si=My5cGY_4MfAN9dwc" target="_blank" rel="noopener noreferrer">OPA QuickStart Guide (Rego + JSON)</a></label>
+          <span class="item__meta">5 min</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i7" class="box" data-mins="15">
+          <label for="i7" class="item__label"><a href="https://youtu.be/DpUDYbFK4IE?si=G58-lCqq0WxYxJys" target="_blank" rel="noopener noreferrer">Using OPA with Terraform - Rego Basics</a></label>
+          <span class="item__meta">15 min</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i8" class="box" data-mins="90">
+          <label for="i8" class="item__label"><a href="https://youtu.be/T7ojX4YnmTA?si=fhkIBhmXz9vFCBbP" target="_blank" rel="noopener noreferrer">Open Policy Agent Deep Dive</a></label>
+          <span class="item__meta">1.5 hours</span>
+        </li>
+      </ul>
+      <p class="grouplabel">Free style <span class="dot">·</span> Optional and Unrequired, a strong start to build knowledge and know-how. </p>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i9" class="box" data-optional>
+          <label for="i9" class="item__label"><a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Chat with ChatGPT</a><span class="item__sub">Ask questions and explore examples</span></label>
+          <span class="item__meta"></span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i10" class="box" data-optional>
+          <label for="i10" class="item__label"><a href="https://play.openpolicyagent.org/" target="_blank" rel="noopener noreferrer">Rego Playground</a><span class="item__sub">Practice writing Rego policies</span></label>
+          <span class="item__meta"></span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i11" class="box" data-optional>
+          <label for="i11" class="item__label"><a href="https://www.openpolicyagent.org/docs/latest/" target="_blank" rel="noopener noreferrer">Official OPA Documentation</a><span class="item__sub">Primary reference for all OPA work</span></label>
+          <span class="item__meta"></span>
+        </li>
+      </ul>
+    </article>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Policy Deployment Engine (PDE) Guides</h4>
+          <p class="card__note">SharePoint: Deakin login required.</p>
+        </div>
+        <p class="card__meta">
+          <span class="dur">3.5 h</span>
+          <span class="frac" data-sec-count>0/2</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i12" class="box" data-mins="90">
+          <label for="i12" class="item__label"><a href="https://deakin365.sharepoint.com/:f:/r/sites/HardhatEnterprises2/Shared%20Documents/%F0%9F%95%B9%20Policy%20Deployment%20Engine/T3%202025/Instructional%20Demos/Requirement%20Installations?csf=1&amp;web=1&amp;e=d5oCAh" target="_blank" rel="noopener noreferrer">Requirement Installations</a></label>
+          <span class="item__meta">1.5 hours</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i13" class="box" data-mins="120">
+          <label for="i13" class="item__label"><a href="https://deakin365.sharepoint.com/:f:/r/sites/HardhatEnterprises2/Shared%20Documents/%F0%9F%95%B9%20Policy%20Deployment%20Engine/T3%202025/Instructional%20Demos/Policy%20Writing?csf=1&amp;web=1&amp;e=oU3U5w" target="_blank" rel="noopener noreferrer">Policy Writing</a></label>
+          <span class="item__meta">2 hours</span>
+        </li>
+      </ul>
+    </article>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Git</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">1.5 h</span>
+          <span class="frac" data-sec-count>0/1</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i14" class="box" data-mins="90">
+          <label for="i14" class="item__label"><a href="https://www.linkedin.com/learning/git-essential-training-25677984?u=2104084" target="_blank" rel="noopener noreferrer">Git Essential Training</a></label>
+          <span class="item__meta">1.5 hours</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+  <div class="tier" data-tier id="tierDhd">
+    <div class="tier__head">
+      <div>
+        <h3><span class="section__n">Section 2</span>Additional Learning: Required to by completed by Distinction and High Distinction level contributors.z</h3>
+        <p class="tier__blurb">Required to be completed alongside the core topics for PDE Contributing members.<span id="tierDhdNote" class="tier__note"></span></p>
+      </div>
+      <div class="tier__meter">
+        <span class="tier__stat"><span data-tier-total>6</span> items <span class="dot">·</span> <span data-tier-hours>17.5 h</span></span>
+        <div class="bar bar--sm"><i data-tier-bar style="width:0%"></i></div>
+        <b data-tier-pct>0%</b>
+      </div>
+    </div>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Security Engineering</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">8 h</span>
+          <span class="frac" data-sec-count>0/3</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i15" class="box" data-mins="150">
+          <label for="i15" class="item__label"><a href="https://www.linkedin.com/learning-login/share?account=2104084&amp;forceAccount=false&amp;redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fadvanced-terraform-18720794%3Ftrk%3Dshare_ent_url%26shareId%3DwLD60kMqR1KRpNaHwhOKeg%253D%253D" target="_blank" rel="noopener noreferrer">Introduction to Advanced Terraform</a></label>
+          <span class="item__meta">2.5 hours</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i16" class="box" data-mins="240">
+          <label for="i16" class="item__label"><a href="https://www.linkedin.com/learning-login/share?account=2104084&amp;forceAccount=false&amp;redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fdevops-foundations-your-first-project-24355651%3Ftrk%3Dshare_ent_url%26shareId%3DcgSI5HiqSbeAz2qJI6%252B%252FbA%253D%253D" target="_blank" rel="noopener noreferrer">Your First Project: DevOps Field!</a></label>
+          <span class="item__meta">4 hours</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i17" class="box" data-mins="90">
+          <label for="i17" class="item__label"><a href="https://www.linkedin.com/learning/using-python-for-automation-2023?u=2104084" target="_blank" rel="noopener noreferrer">Using Python for Automation</a></label>
+          <span class="item__meta">1.5 hours</span>
+        </li>
+      </ul>
+    </article>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Cloud Basics</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">9.5 h</span>
+          <span class="frac" data-sec-count>0/3</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i18" class="box" data-mins="60">
+          <label for="i18" class="item__label"><a href="https://www.linkedin.com/learning-login/share?account=2104084&amp;forceAccount=false&amp;redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Flearning-cloud-computing-serverless-computing%3Ftrk%3Dshare_ent_url%26shareId%3DQHZZk9T7RrWAim8BTHkL9Q%253D%253D" target="_blank" rel="noopener noreferrer">Introduction to Serverless Computing</a></label>
+          <span class="item__meta">1 hour</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i19" class="box" data-mins="60">
+          <label for="i19" class="item__label"><a href="https://www.linkedin.com/learning-login/share?account=2104084&amp;forceAccount=false&amp;redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fcloud-computing-understanding-networking%3Ftrk%3Dshare_ent_url%26shareId%3D6d%252F3JPyFS6uW9O0%252FMcGTSg%253D%253D" target="_blank" rel="noopener noreferrer">Cloud Computing Networking</a></label>
+          <span class="item__meta">1 hour</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i20" class="box" data-mins="450">
+          <label for="i20" class="item__label"><a href="https://www.linkedin.com/learning/paths/cloud-computing-essentials-benefits-services-platforms-security-and-careers?u=2104084" target="_blank" rel="noopener noreferrer">Cloud Computing Essentials: Benefits, Services, Platforms, Security, and Careers</a></label>
+          <span class="item__meta">7.5 hours</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+<section class="phase phase--opt" data-phase="opt">
+  <header class="phase__head">
+    <div class="phase__text">
+      <p class="phase__label">Optional</p>
+      <h2>Further Learning</h2>
+      <p class="phase__blurb">For students aiming to further their knowledge in cloud computing and professional Git practices.</p>
+    </div>
+    <div class="phase__meter">
+      <div class="meter__top"><b>2 items</b><span data-phase-pct>0%</span></div>
+      <div class="bar"><i data-phase-bar style="width:0%"></i></div>
+      <div class="meter__foot"><span data-phase-count>0 of 2 done</span><span data-phase-hours> ~6 hours</span></div>
+    </div>
+  </header>
+  <div class="tier" data-tier>
+    <div class="tier__head">
+      <div>
+        <h3><span class="section__n">Section 3 </span>Additional Learning</h3>
+        <p class="tier__blurb">Not required and not assessed. Perfect for those interested in deepening their knowledge, and gaining professional certifications.</p>
+      </div>
+      <div class="tier__meter">
+        <span class="tier__stat">2 items <span class="dot">·</span> <span data-tier-hours>6 h</span></span>
+        <div class="bar bar--sm"><i data-tier-bar style="width:0%"></i></div>
+        <b data-tier-pct>0%</b>
+      </div>
+    </div>
+    <article class="card">
+      <header class="card__head">
+        <div>
+          <h4>Recommended</h4>
+        </div>
+        <p class="card__meta">
+          <span class="dur">6 h</span>
+          <span class="frac" data-sec-count>0/2</span>
+        </p>
+      </header>
+      <ul class="items">
+        <li class="item">
+          <input type="checkbox" id="i21" class="box" data-mins="270">
+          <label for="i21" class="item__label"><a href="https://www.linkedin.com/learning-login/share?account=2104084&amp;forceAccount=false&amp;redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fhashicorp-certified-terraform-associate-003-cert-prep%3Ftrk%3Dshare_ent_url%26shareId%3DaoKoFx%252BJQ6KmXKuFPIzMXQ%253D%253D" target="_blank" rel="noopener noreferrer">Terraform Associate (003) Certification</a></label>
+          <span class="item__meta">4.5 hours</span>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="i22" class="box" data-mins="90">
+          <label for="i22" class="item__label"><a href="https://www.linkedin.com/learning/using-git-with-visual-studio-code?u=2104084" target="_blank" rel="noopener noreferrer">Git with VS Code</a></label>
+          <span class="item__meta">1.5 hours</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+  <footer>
+    <span>&#169; 2026 YB IT <span class="dot">·</span> Deakin Capstone portal</span>
+    <span>learn.ybit.au/upskilling</span>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var melTime = document.getElementById("melTime");
+    if (melTime && window.Intl && Intl.DateTimeFormat) {
+      var fmt = new Intl.DateTimeFormat("en-AU", {
+        timeZone: "Australia/Melbourne",
+        weekday: "short", day: "numeric", month: "short", year: "numeric"
+      });
+      var ymdFmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Australia/Melbourne", year: "numeric", month: "2-digit", day: "2-digit"
+      });
+      var MS_DAY = 86400000;
+      var WEEK_MS = 7 * MS_DAY;
+      var winStart = Date.UTC(2026, 6, 6);
+      var winEnd = winStart + 4 * WEEK_MS;
+
+      var timerCount = document.getElementById("timerCount");
+      var timerBar = document.getElementById("timerBar");
+      var timerStatus = document.getElementById("timerStatus");
+      var windowNote = document.getElementById("windowNote");
+      var windowRange = document.getElementById("windowRange");
+      var markButtons = Array.prototype.slice.call(document.querySelectorAll(".markpill__btn"));
+      var markNote = document.getElementById("markNote");
+      var tierDhd = document.getElementById("tierDhd");
+      var tierDhdNote = document.getElementById("tierDhdNote");
+      var reqTargetLabel = document.getElementById("reqTargetLabel");
+      var splitOpt = document.querySelector(".split__cell--opt");
+      var phaseOpt = document.querySelector(".phase--opt");
+      var MARK_KEY = "pde-target-grade-v1";
+      var GRADE_LABELS = { P: "Pass", C: "Credit", D: "Distinction", HD: "High Distinction" };
+      var markFromGrade = function (grade) {
+        return grade === "D" || grade === "HD" ? "dhd" : grade ? "pc" : "";
+      };
+
+      var rangeFmt = new Intl.DateTimeFormat("en-AU", { timeZone: "UTC", day: "numeric", month: "short" });
+      var yearFmt = new Intl.DateTimeFormat("en-AU", { timeZone: "UTC", year: "numeric" });
+
+      var todayUTC = function () {
+        var parts = {};
+        ymdFmt.formatToParts(new Date()).forEach(function (p) { parts[p.type] = p.value; });
+        return Date.UTC(+parts.year, +parts.month - 1, +parts.day);
+      };
+
+      var tick = function () {
+        var now = new Date();
+        melTime.textContent = fmt.format(now);
+        melTime.dateTime = now.toISOString();
+
+        if (!timerCount) return;
+        var today = todayUTC();
+        var totalDays = (winEnd - winStart) / MS_DAY;
+        var elapsedDays = Math.min(Math.max((today - winStart) / MS_DAY, 0), totalDays);
+        var pct = Math.round(elapsedDays / totalDays * 100);
+        timerBar.style.width = pct + "%";
+
+        if (today < winStart) {
+          var untilStart = Math.round((winStart - today) / MS_DAY);
+          timerCount.textContent = untilStart + "d";
+          timerCount.classList.remove("is-overdue");
+          timerStatus.textContent = "Opens in " + untilStart + " day" + (untilStart === 1 ? "" : "s");
+        } else if (today <= winEnd) {
+          var remaining = Math.round((winEnd - today) / MS_DAY);
+          timerCount.textContent = "In Progress";
+          timerCount.classList.remove("is-overdue");
+          timerStatus.textContent = remaining + " day" + (remaining === 1 ? "" : "s") + " remaining";
+        } else {
+          var overdue = Math.round((today - winEnd) / MS_DAY);
+          timerCount.textContent = "Complete";
+          timerCount.classList.add("is-overdue");
+          timerStatus.textContent = "Window: " + overdue + " day" + (overdue === 1 ? "" : "s") + " ago";
+        }
+      };
+
+      var applyMark = function (grade) {
+        var mark = markFromGrade(grade);
+        var weeks = mark === "dhd" ? 3 : 4;
+        winEnd = winStart + weeks * WEEK_MS;
+        markButtons.forEach(function (btn) {
+          btn.classList.toggle("is-active", btn.dataset.grade === grade);
+        });
+        if (windowNote) windowNote.hidden = !grade;
+        if (windowRange) {
+          windowRange.textContent = grade
+            ? rangeFmt.format(winStart) + " – " + rangeFmt.format(winEnd) + " " + yearFmt.format(winEnd)
+            : "";
+        }
+        if (markNote) {
+          markNote.textContent = mark === "dhd" ? "3-week window applies to your target mark."
+            : mark === "pc" ? "4-week window applies to your target mark." : "";
+        }
+        var hideExtra = mark === "pc";
+        if (tierDhd) tierDhd.hidden = hideExtra;
+        if (splitOpt) splitOpt.hidden = hideExtra;
+        if (phaseOpt) phaseOpt.hidden = hideExtra;
+        if (reqTargetLabel) {
+          reqTargetLabel.textContent = GRADE_LABELS[grade] || "";
+        }
+        if (tierDhdNote) {
+          tierDhdNote.textContent = mark === "dhd" ? "Required for your target mark." : "";
+        }
+        tick();
+        document.dispatchEvent(new Event("pde:recalc"));
+      };
+
+      if (markButtons.length) {
+        var savedGrade = "";
+        try {
+          var stored = localStorage.getItem(MARK_KEY);
+          if (["P", "C", "D", "HD"].indexOf(stored) !== -1) savedGrade = stored;
+        } catch (e) { }
+
+        markButtons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var grade = btn.classList.contains("is-active") ? "" : btn.dataset.grade;
+            applyMark(grade);
+            try { localStorage.setItem(MARK_KEY, grade); } catch (e) {}
+          });
+        });
+        applyMark(savedGrade);
+      } else {
+        tick();
+      }
+      setInterval(tick, 60000);
+    }
+  })();
+
+  (function () {
+    var KEY = "pde-upskilling-v2";
+    var boxes = Array.prototype.slice.call(document.querySelectorAll(".box"));
+    var phases = Array.prototype.slice.call(document.querySelectorAll("[data-phase]"));
+
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (saved && saved.length === boxes.length) {
+        boxes.forEach(function (b, i) { b.checked = !!saved[i]; });
+      }
+    } catch (e) { }
+
+    function pct(done, total) { return total ? Math.round(done / total * 100) : 0; }
+
+    function fmtDuration(mins, style) {
+      mins = Math.max(0, Math.round(mins));
+      if (mins < 60) return (style === "long" ? "~" : "") + mins + " min";
+      var h = Math.round(mins / 60 * 10) / 10;
+      var hs = (h % 1 === 0) ? h.toFixed(0) : h.toFixed(1);
+      return style === "long" ? ("~" + hs + " hour" + (h === 1 ? "" : "s")) : (hs + " h");
+    }
+
+    function count(scope) {
+      var bs = scope.querySelectorAll(".box"), d = 0, total = 0, mins = 0;
+      bs.forEach(function (b) {
+        if (b.closest("[hidden]")) return;
+        if (b.dataset.optional !== undefined) return;
+        total++;
+        if (b.checked) d++;
+        else mins += Number(b.dataset.mins) || 0;
+      });
+      return { done: d, total: total, mins: mins };
+    }
+
+    function render() {
+      phases.forEach(function (phase) {
+        phase.querySelectorAll(".card").forEach(function (card) {
+          var c = count(card);
+          var frac = card.querySelector("[data-sec-count]");
+          frac.textContent = c.done + "/" + c.total;
+          frac.classList.toggle("is-complete", c.total > 0 && c.done === c.total);
+          var durEl = card.querySelector(".dur");
+          if (durEl) durEl.textContent = fmtDuration(c.mins, "short");
+        });
+        phase.querySelectorAll("[data-tier]").forEach(function (tier) {
+          var c = count(tier), p = pct(c.done, c.total);
+          tier.querySelector("[data-tier-pct]").textContent = p + "%";
+          tier.querySelector("[data-tier-bar]").style.width = p + "%";
+          var tierHoursEl = tier.querySelector("[data-tier-hours]");
+          if (tierHoursEl) tierHoursEl.textContent = fmtDuration(c.mins, "short");
+          var tierTotalEl = tier.querySelector("[data-tier-total]");
+          if (tierTotalEl) tierTotalEl.textContent = c.total;
+        });
+        var pc = count(phase), pp = pct(pc.done, pc.total);
+        phase.querySelector("[data-phase-pct]").textContent = pp + "%";
+        phase.querySelector("[data-phase-bar]").style.width = pp + "%";
+        phase.querySelector("[data-phase-count]").textContent =
+          pc.done + " of " + pc.total + " done";
+        var phaseHoursEl = phase.querySelector("[data-phase-hours]");
+        if (phaseHoursEl) phaseHoursEl.textContent = fmtDuration(pc.mins, "long");
+        var phaseTotalEl = phase.querySelector("[data-phase-total]");
+        if (phaseTotalEl) phaseTotalEl.textContent = pc.total;
+
+        var key = phase.dataset.phase;
+        document.getElementById(key + "Pct").textContent = pp + "%";
+        document.getElementById(key + "Bar").style.width = pp + "%";
+        document.getElementById(key + "Count").textContent =
+          pc.done + " of " + pc.total + " done";
+        var splitHoursEl = document.querySelector('[data-split-hours="' + key + '"]');
+        if (splitHoursEl) splitHoursEl.textContent = fmtDuration(pc.mins, "long");
+        var taskTotalEl = document.getElementById(key + "TaskTotal");
+        if (taskTotalEl) taskTotalEl.textContent = pc.total;
+        var noteTotalEl = document.getElementById(key + "NoteTotal");
+        if (noteTotalEl) noteTotalEl.textContent = pc.total;
+      });
+    }
+
+    boxes.forEach(function (b) {
+      b.addEventListener("change", function () {
+        render();
+        try {
+          localStorage.setItem(KEY, JSON.stringify(boxes.map(function (x) { return x.checked; })));
+        } catch (e) {}
+      });
+    });
+    document.addEventListener("pde:recalc", render);
+    render();
+  })();
+</script>
+</body>
+</html>
